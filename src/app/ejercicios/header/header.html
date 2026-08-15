@@ -1,0 +1,37 @@
+<header class="site-header">
+  <a class="brand" href="#" aria-label="Inicio de Nitro Shop">
+    <span class="brand__mark">N</span>
+    <span>Nitro<span>Shop</span></span>
+  </a>
+
+  <div class="search">
+    <label class="search__icon" for="product-search">
+    <span aria-hidden="true">⌕</span>
+    </label>
+
+    <input
+      id="product-search"
+      type="text"
+      placeholder="Busca tus productos"
+      [value]="texto()"
+      (input)="alEscribir($event)"
+      class="search__input"
+  />
+</div>
+
+  <button
+    type="button"
+    class="search__button search__button--outside"
+    (click)="alBuscar()"
+  >
+    Buscar
+  </button>
+
+  <nav class="header-actions" aria-label="Acciones de usuario">
+    <a href="#">Iniciar Sesion</a>
+  </nav>
+</header>
+<p *ngIf="textoBuscado()" class="search-result">
+  Resultados para: <strong>{{ textoBuscado() }}</strong>
+</p>
+

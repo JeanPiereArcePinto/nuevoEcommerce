@@ -1,0 +1,71 @@
+<div class="min-h-screen bg-slate-100 flex flex-col lg:flex-row">
+  <main class="flex-1 p-6 lg:p-10">
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-slate-800">Productos</h1>
+      <p class="text-slate-500 mt-1">Elige tus productos y agrégalos al carrito</p>
+    </header>
+
+    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+
+
+      @for (producto of productos; track producto.id) {
+        <app-product-card
+          [id]="producto.id"
+          [nombre]="producto.nombre"
+          [precio]="producto.precio"
+          [imagen]="producto.imagen"
+          [stock]="producto.stock"
+          (addToCart)="manejarAgregarAlCarrito($event)"
+        />
+      }
+
+    </section>
+  </main>
+
+  <aside class="w-full lg:w-80 bg-slate-900 text-slate-100 p-6 lg:min-h-screen">
+    <div class="flex items-center gap-3 mb-6">
+      <span class="text-3xl">🛒</span>
+      <h2 class="text-xl font-semibold">Tu Carrito</h2>
+
+      <span
+        class="ml-auto inline-flex items-center justify-center min-w-7 h-7 px-2 rounded-full bg-emerald-500 text-slate-900 font-bold text-sm transition-transform duration-300 scale-100"
+      >
+      {{ calcularArticulosSeleccionadosPorTipo() }}
+      </span>
+    </div>
+
+    <div class="space-y-3 mb-6">
+      @for( productoCarrito of elementosCarrito; track $index ){
+        <div class="flex items-center gap-3 bg-slate-800 rounded-xl p-3">
+          <img
+            [src]="productoCarrito.imagen"
+            [alt]="productoCarrito.nombre"
+            alt="Producto"
+            class="w-14 h-14 object-cover rounded-lg"
+          />
+
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-white truncate">{{ productoCarrito.nombre }}</p>
+            <p class="text-xs text-slate-400">{{productoCarrito.precio | precioSoles }} x {{ productoCarrito.cantidad }}</p>
+          </div>
+
+          <span class="text-sm font-semibold text-emerald-400">{{ productoCarrito.precio * productoCarrito.cantidad | precioSoles }}</span>
+        </div>
+      } @empty {
+        <p>Tu carrito esta vacio</p>
+      }
+    </div>
+
+    <div class="space-y-3">
+      <div class="flex justify-between text-sm text-slate-300">
+        <span>Total de items</span>
+        <span class="font-medium text-white">{{ calcularCantidad() }}</span>
+      </div>
+
+      <div class="flex justify-between text-sm text-slate-300">
+        <span>Total a pagar</span>
+        <span class="font-semibold text-emerald-400">{{ calcularPrecioTotal() }}</span>
+      </div>
+    </div>
+  </aside>
+</div>
