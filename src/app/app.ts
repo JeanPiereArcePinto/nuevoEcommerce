@@ -3,8 +3,9 @@ import { DemoCarritoComponent } from './ejercicios/demo-carrito/demo-carrito';
 import { Header } from './ejercicios/header/header';
 import { Footer } from './ejercicios/footer/footer';
 import { RegistroComponent } from './ejercicios/pantallas/registro/registro';
+import { LoginComponent } from './ejercicios/pantallas/login/login';
 
-export type VistaActual = 'catalogo' | 'registro';
+export type VistaActual = 'catalogo' | 'registro' | 'login';
 
 // AppComponent no tiene lógica propia: solo decide, vía app.html, cuál de los
 // 9 ejercicios se muestra en pantalla. Para cambiar de ejercicio, comenta el
@@ -21,6 +22,7 @@ export type VistaActual = 'catalogo' | 'registro';
     Footer,
     DemoCarritoComponent,
     RegistroComponent,
+    LoginComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',

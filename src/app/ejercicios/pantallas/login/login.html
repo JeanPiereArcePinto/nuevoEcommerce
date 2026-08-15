@@ -1,0 +1,57 @@
+<main class="min-h-screen bg-slate-100 px-6 py-12">
+  <form
+    class="mx-auto max-w-md rounded-xl bg-white p-6 shadow-md md:p-10"
+    (submit)="$event.preventDefault(); iniciarSesion()"
+  >
+    <h1 class="mb-6 text-center text-2xl font-bold text-slate-800">Iniciar sesión</h1>
+
+    <label class="mb-4 block text-sm font-medium text-slate-700">
+      Email
+      <input
+        type="email"
+        placeholder="correo@gmail.com"
+        autocomplete="email"
+        class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
+        [value]="email()"
+        (input)="actualizarEmail($event)"
+      />
+      @if (intentoLogin() && !email().trim()) {
+        <span class="mt-1 block text-sm text-red-600">El email es obligatorio.</span>
+      }
+      @if (intentoLogin() && email().trim() && !emailValido()) {
+        <span class="mt-1 block text-sm text-red-600">Ingresa un email con formato válido.</span>
+      }
+    </label>
+
+    <label class="mb-6 block text-sm font-medium text-slate-700">
+      Password
+      <app-reto-05-password-strength [(password)]="password" />
+      @if (intentoLogin() && !password()) {
+        <span class="mt-1 block text-sm text-red-600">La contraseña es obligatoria.</span>
+      }
+      @if (passwordTieneEspacios()) {
+        <span class="mt-1 block text-sm text-red-600">La contraseña no puede contener espacios.</span>
+      }
+    </label>
+
+    <div class="mb-6 flex items-center justify-between gap-4 text-sm">
+      <label class="flex items-center gap-2 text-slate-700">
+        <input
+          type="checkbox"
+          class="h-4 w-4 rounded border-slate-300 accent-blue-600"
+          [checked]="recordarme()"
+          (change)="actualizarRecordarme($event)"
+        />
+        <span>Recordarme</span>
+      </label>
+      <a href="#" class="font-medium text-blue-600 hover:underline">¿Has olvidado tu contraseña?</a>
+    </div>
+
+    <button
+      type="submit"
+      class="w-full rounded-md bg-emerald-600 px-4 py-2 font-medium text-white hover:bg-emerald-700"
+    >
+      Iniciar sesión
+    </button>
+  </form>
+</main>
