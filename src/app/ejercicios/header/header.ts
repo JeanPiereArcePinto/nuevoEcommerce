@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, output, signal } from '@angular/core';
+import { VistaActual } from '../../app';
 
 @Component({
   selector: 'app-header',
@@ -10,6 +11,7 @@ import { Component, signal } from '@angular/core';
 export class Header {
   texto = signal('');
   textoBuscado = signal('');
+  vistaSeleccionada = output<VistaActual>();
 
   alEscribir(evento: Event) {
     const input = evento.target as HTMLInputElement;
@@ -18,5 +20,9 @@ export class Header {
 
   alBuscar() {
     this.textoBuscado.set(this.texto());
+  }
+  
+  cambiarVista(vista: VistaActual) {
+    this.vistaSeleccionada.emit(vista);
   }
 }

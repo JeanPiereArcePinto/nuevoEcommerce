@@ -4,6 +4,13 @@
   Para cambiar de ejercicio, comenta la línea activa y descomenta la que quieras mostrar.
 -->
 
-<app-header />
-<app-demo-carrito />
+<app-header (vistaSeleccionada)="vistaActual.set($event)" />
+@switch (vistaActual()) {
+  @case ('catalogo') {
+    <app-demo-carrito />
+  }
+  @case ('registro') {
+    <app-registro />
+  }
+}
 <app-footer />

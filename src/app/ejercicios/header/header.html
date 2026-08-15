@@ -1,8 +1,8 @@
 <header class="site-header">
-  <a class="brand" href="#" aria-label="Inicio de Nitro Shop">
+  <button type="button" class="brand" aria-label="Inicio de Nitro Shop" (click)="cambiarVista('catalogo')">
     <span class="brand__mark">N</span>
     <span>Nitro<span>Shop</span></span>
-  </a>
+  </button>
 
   <div class="search">
     <label class="search__icon" for="product-search">
@@ -29,6 +29,7 @@
 
   <nav class="header-actions" aria-label="Acciones de usuario">
     <a href="#">Iniciar Sesion</a>
+    <button type="button" (click)="cambiarVista('registro')">Registrarse</button>
   </nav>
 </header>
 <p *ngIf="textoBuscado()" class="search-result">
