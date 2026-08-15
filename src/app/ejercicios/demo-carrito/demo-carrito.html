@@ -3,12 +3,27 @@
     <header class="mb-8">
       <h1 class="text-3xl font-bold text-slate-800">Productos</h1>
       <p class="text-slate-500 mt-1">Elige tus producto y agrégalos al carrito </p>
+      <div class="relative mt-6 w-full max-w-2xl group">
+        <label for="busqueda-catalogo" class="sr-only">Buscar productos por nombre</label>
+        <span
+          aria-hidden="true"
+          class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-xl text-slate-400 transition-colors group-focus-within:text-emerald-600"
+        >⌕</span>
+        <input
+          id="busqueda-catalogo"
+          type="search"
+          placeholder="Buscar productos por nombre aqui"
+          class="w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-12 pr-5 text-slate-800 shadow-sm outline-none transition duration-200 placeholder:text-slate-400 hover:border-slate-300 hover:shadow-md focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+          [value]="textoBusqueda()"
+          (input)="actualizarBusqueda($event)"
+        />
+      </div>
     </header>
 
     <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
 
 
-      @for (producto of productos; track producto.id) {
+      @for (producto of productosFiltrados(); track producto.id) {
         <app-product-card
           [id]="producto.id"
           [nombre]="producto.nombre"
@@ -17,6 +32,10 @@
           [stock]="producto.stock"
           (addToCart)="manejarAgregarAlCarrito($event)"
         />
+      } @empty {
+        <p class="col-span-full rounded-lg bg-white p-6 text-center text-slate-600 shadow-sm">
+          No se encontraron productos
+        </p>
       }
 
     </section>

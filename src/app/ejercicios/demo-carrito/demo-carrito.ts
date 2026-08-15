@@ -1,13 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { ProductCardComponent } from '../product-card/product-card';
 import { IProductoCarrito, IProductoTienda } from '../../interfaces/producto-carrito.interface';
-import { CurrencyPipe } from '@angular/common';
 import { PrecioSolesPipe } from '../../pipes/precio-soles-pipe';
 
 @Component({
   selector: 'app-demo-carrito',
   standalone: true,
-  imports: [ProductCardComponent, PrecioSolesPipe, CurrencyPipe],
+  imports: [ProductCardComponent, PrecioSolesPipe],
   templateUrl: './demo-carrito.html',
 })
 export class DemoCarritoComponent {
@@ -18,6 +17,7 @@ export class DemoCarritoComponent {
   // (addToCart)="onAddToCart($event)" en cada <app-product-card />.
 
   elementosCarrito: IProductoCarrito[] = []
+  textoBusqueda = signal('');
 
   productos: IProductoTienda[] = [
     { id: 1, nombre: 'Smartwatch Watch 7 Small Green"', precio: 599, imagen: 'https://media.falabella.com/tottusPE/43377809_1/w=800,h=800,fit=pad', stock: 7 },
@@ -31,6 +31,23 @@ export class DemoCarritoComponent {
     { id: 9, nombre: 'Monitor Samsung LED 24', precio: 390, imagen: 'https://www.kabifperu.com/imagenes/prod-05022021114349-monitor-samsung-led-24-s24f354fhl-hdmi-deta.png', stock: 5 },
     { id: 10, nombre: 'Parlante JBL Go 4 Acuatico', precio: 170, imagen: 'https://oechsle.vteximg.com.br/arquivos/ids/21994563-1000-1000/imageUrl_1.jpg?v=638925643978770000', stock: 14 },
   ];
+
+  productosFiltrados = computed(() => {
+    const texto = this.textoBusqueda().trim().toLocaleLowerCase();
+
+    if (!texto) {
+      return this.productos;
+    }
+
+    return this.productos.filter((producto) =>
+      producto.nombre.toLocaleLowerCase().includes(texto)
+    );
+  });
+
+  actualizarBusqueda(evento: Event) {
+    const input = evento.target as HTMLInputElement;
+    this.textoBusqueda.set(input.value);
+  }
 
   manejarAgregarAlCarrito(data: IProductoCarrito){
     const productoExistente = this.elementosCarrito.find((item) => item.id === data.id);
