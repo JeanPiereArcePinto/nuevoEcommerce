@@ -1,5 +1,5 @@
 import { Component, input, model, output } from '@angular/core';
-import { IProductoCarrito } from '../../interfaces/producto-carrito.interface';
+import { IProductoCarrito, IProductoTienda } from '../../interfaces/producto-carrito.interface';
 import { EstadoStockPipe } from '../../pipes/estado-stock-pipe';
 import { PrecioSolesPipe } from '../../pipes/precio-soles-pipe';
 
@@ -21,10 +21,12 @@ export class ProductCardComponent {
   precio = input.required<number>()
   imagen = input.required<string>()
   stock = input.required<number>()
+  esFavorito = input<boolean>(false)
 
   cantidad = model<number>(1)
 
   addToCart = output<IProductoCarrito>()
+  toggleFavorito = output<IProductoTienda>()
 
   incrementar(){
     const stockDisponible = this.stock();
@@ -55,6 +57,16 @@ export class ProductCardComponent {
       cantidad: this.cantidad(),
       imagen: this.imagen()
     })
+  }
+
+  alternarFavorito() {
+    this.toggleFavorito.emit({
+      id: this.id(),
+      nombre: this.nombre(),
+      precio: this.precio(),
+      imagen: this.imagen(),
+      stock: this.stock()
+    });
   }
 
 }

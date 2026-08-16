@@ -18,6 +18,7 @@ export class DemoCarritoComponent {
 
   elementosCarrito: IProductoCarrito[] = []
   textoBusqueda = signal('');
+  favoritos = signal<IProductoTienda[]>([]);
 
   productos: IProductoTienda[] = [
     { id: 1, nombre: 'Smartwatch Watch 7 Small Green"', precio: 599, imagen: 'https://media.falabella.com/tottusPE/43377809_1/w=800,h=800,fit=pad', stock: 7 },
@@ -47,6 +48,20 @@ export class DemoCarritoComponent {
   actualizarBusqueda(evento: Event) {
     const input = evento.target as HTMLInputElement;
     this.textoBusqueda.set(input.value);
+  }
+
+  manejarToggleFavorito(producto: IProductoTienda) {
+    this.favoritos.update((favoritosActuales) => {
+      const yaEsFavorito = favoritosActuales.some((favorito) => favorito.id === producto.id);
+
+      return yaEsFavorito
+        ? favoritosActuales.filter((favorito) => favorito.id !== producto.id)
+        : [...favoritosActuales, producto];
+    });
+  }
+
+  esFavorito(productoId: number) {
+    return this.favoritos().some((favorito) => favorito.id === productoId);
   }
 
   manejarAgregarAlCarrito(data: IProductoCarrito){
