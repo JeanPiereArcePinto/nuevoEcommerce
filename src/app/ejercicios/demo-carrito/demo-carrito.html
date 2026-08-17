@@ -2,30 +2,31 @@
   <main class="flex-1 p-6 lg:p-10">
     <header class="mb-8">
       <h1 class="text-3xl font-bold text-slate-800">Productos</h1>
-      <div class="mt-3 flex justify-end">
-        <div class="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-100 hover:shadow-md">
+      <p class="text-slate-500 mt-1">Elige tus productos y agrégalos al carrito</p>
+      <div class="mt-6 flex w-full flex-col gap-3 sm:flex-row sm:items-center">
+        <div class="relative w-full max-w-2xl group">
+          <label for="busqueda-catalogo" class="sr-only">Buscar productos por nombre</label>
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-xl text-slate-400 transition-colors group-focus-within:text-emerald-600"
+          >⌕</span>
+          <input
+            id="busqueda-catalogo"
+            type="search"
+            placeholder="Buscar productos por nombre aqui"
+            class="w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-12 pr-5 text-slate-800 shadow-sm outline-none transition duration-200 placeholder:text-slate-400 hover:border-slate-300 hover:shadow-md focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            [value]="textoBusqueda()"
+            (input)="actualizarBusqueda($event)"
+          />
+        </div>
+
+        <div class="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-100 hover:shadow-md sm:self-auto">
           <span class="text-lg" aria-hidden="true">❤</span>
           <span>Favoritos</span>
           <span class="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
-            {{ favoritos().length }}
+            {{ contadorFavoritos() }}
           </span>
         </div>
-      </div>
-      <p class="text-slate-500 mt-1">Elige tus producto y agrégalos al carrito </p>
-      <div class="relative mt-6 w-full max-w-2xl group">
-        <label for="busqueda-catalogo" class="sr-only">Buscar productos por nombre</label>
-        <span
-          aria-hidden="true"
-          class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-xl text-slate-400 transition-colors group-focus-within:text-emerald-600"
-        >⌕</span>
-        <input
-          id="busqueda-catalogo"
-          type="search"
-          placeholder="Buscar productos por nombre aqui"
-          class="w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-12 pr-5 text-slate-800 shadow-sm outline-none transition duration-200 placeholder:text-slate-400 hover:border-slate-300 hover:shadow-md focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
-          [value]="textoBusqueda()"
-          (input)="actualizarBusqueda($event)"
-        />
       </div>
     </header>
 
@@ -50,8 +51,40 @@
       }
 
     </section>
-  </main>
 
+    <section class="mt-12 border-t border-slate-200 pt-8">
+      <div class="mb-6 flex items-center gap-3">
+        <span class="text-3xl text-red-500" aria-hidden="true">❤</span>
+        <div>
+          <h2 class="text-2xl font-bold text-slate-800">Mis favoritos</h2>
+          <p class="text-sm text-slate-500">
+            {{ contadorFavoritos() }} productos guardados
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        @for (producto of favoritos(); track producto.id) {
+          <app-product-card
+            [id]="producto.id"
+            [nombre]="producto.nombre"
+            [precio]="producto.precio"
+            [imagen]="producto.imagen"
+            [stock]="producto.stock"
+            [esFavorito]="true"
+            (addToCart)="manejarAgregarAlCarrito($event)"
+            (toggleFavorito)="manejarToggleFavorito($event)"
+          />
+        } @empty {
+          <div class="col-span-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/70 px-4 py-5 text-sm text-slate-500 shadow-sm">
+            <span class="text-xl text-red-400" aria-hidden="true">♡</span>
+            <p class="font-medium">Aún no tienes favoritos</p>
+          </div>
+        }
+      </div>
+    </section>
+  </main>
+  
   <aside class="w-full lg:w-80 bg-slate-900 text-slate-100 p-6 lg:min-h-screen">
     <div class="flex items-center gap-3 mb-6">
       <span class="text-3xl">🛒</span>

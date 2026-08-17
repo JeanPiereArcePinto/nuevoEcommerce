@@ -19,6 +19,7 @@ export class DemoCarritoComponent {
   elementosCarrito: IProductoCarrito[] = []
   textoBusqueda = signal('');
   favoritos = signal<IProductoTienda[]>([]);
+  contadorFavoritos = computed(() => this.favoritos().length);
 
   productos: IProductoTienda[] = [
     { id: 1, nombre: 'Smartwatch Watch 7 Small Green"', precio: 599, imagen: 'https://media.falabella.com/tottusPE/43377809_1/w=800,h=800,fit=pad', stock: 7 },
