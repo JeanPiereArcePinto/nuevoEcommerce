@@ -16,7 +16,7 @@ export class ProductCardComponent {
   // llamado "addToCart" con un método agregarAlCarrito() que emita
   // { id, nombre, precio, cantidad }.
 
-  id = input.required<number>()
+  id = input.required<string>()
   nombre = input.required<string>()
   precio = input.required<number>()
   imagen = input.required<string>()

@@ -4,8 +4,9 @@ import { Header } from './ejercicios/header/header';
 import { Footer } from './ejercicios/footer/footer';
 import { RegistroComponent } from './ejercicios/pantallas/registro/registro';
 import { LoginComponent } from './ejercicios/pantallas/login/login';
+import { ProductAdminComponent } from './components/product-admin/product-admin';
 
-export type VistaActual = 'catalogo' | 'registro' | 'login';
+export type VistaActual = 'catalogo' | 'registro' | 'login'| 'admin';
 
 // AppComponent no tiene lógica propia: solo decide, vía app.html, cuál de los
 // 9 ejercicios se muestra en pantalla. Para cambiar de ejercicio, comenta el
@@ -23,10 +24,11 @@ export type VistaActual = 'catalogo' | 'registro' | 'login';
     DemoCarritoComponent,
     RegistroComponent,
     LoginComponent,
+    ProductAdminComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App {
-  vistaActual = signal<VistaActual>('catalogo');
+  readonly vistaActual = signal<VistaActual>('catalogo');
 }

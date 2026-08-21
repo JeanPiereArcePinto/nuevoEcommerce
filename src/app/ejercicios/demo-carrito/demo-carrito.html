@@ -33,12 +33,17 @@
     <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
 
 
+      @if (productService.error()) {
+        <p class="col-span-full rounded-lg border border-red-200 bg-red-50 p-6 text-center text-red-700 shadow-sm">
+          {{ productService.error() }}
+        </p>
+      } @else {
       @for (producto of productosFiltrados(); track producto.id) {
         <app-product-card
           [id]="producto.id"
-          [nombre]="producto.nombre"
-          [precio]="producto.precio"
-          [imagen]="producto.imagen"
+          [nombre]="producto.name"
+          [precio]="producto.price"
+          [imagen]="producto.image"
           [stock]="producto.stock"
           [esFavorito]="esFavorito(producto.id)"
           (addToCart)="manejarAgregarAlCarrito($event)"
@@ -48,6 +53,7 @@
         <p class="col-span-full rounded-lg bg-white p-6 text-center text-slate-600 shadow-sm">
           No se encontraron productos
         </p>
+      }
       }
 
     </section>
@@ -132,3 +138,4 @@
     </div>
   </aside>
 </div>
+

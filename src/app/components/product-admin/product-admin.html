@@ -1,0 +1,52 @@
+<main class="product-admin">
+  <section class="admin-card">
+    <div class="admin-heading">
+      <div>
+        <h1 class="admin-title">{{ idEnEdicion ? 'Editar Producto' : 'Nuevo Producto' }}</h1>
+      </div>
+      @if (idEnEdicion) {
+        <button type="button" class="button button-secondary" (click)="cancelarEdicion()">
+          Cancelar edición
+        </button>
+      }
+    </div>
+
+    <div class="form-grid">
+      <label>Nombre <input [(ngModel)]="nombre" placeholder="Nombre del producto" /></label>
+      <label>Precio <input [(ngModel)]="precio" type="number" min="0" placeholder="Precio" /></label>
+      <label>URL de imagen <input [(ngModel)]="imagen" type="url" placeholder="https://" /></label>
+      <label>Stock <input [(ngModel)]="stock" type="number" min="0" placeholder="Stock" /></label>
+    </div>
+
+    <button type="button" class="button button-primary" [disabled]="guardando()" (click)="guardar()">
+      {{ guardando() ? 'Guardando…' : 'Guardar' }}
+    </button>
+
+    @if (mensaje()) { <p class="feedback success">{{ mensaje() }}</p> }
+    @if (errorOperacion()) { <p class="feedback error">{{ errorOperacion() }}</p> }
+  </section>
+
+  <section class="admin-card">
+    <h2 class="section-title">Productos</h2>
+    @if (productService.error()) {
+      <p class="feedback error">{{ productService.error() }}</p>
+    } @else {
+      <div class="product-list">
+        @for (p of productService.productos(); track p.id) {
+          <div class="fila-producto">
+            <img [src]="p.image" [alt]="p.name" />
+            <span class="product-name">{{ p.name }}</span>
+            <span>{{ p.price | currency:'PEN':'symbol':'1.2-2' }}</span>
+            <span>Stock: {{ p.stock }}</span>
+            <div class="row-actions">
+              <button type="button" class="button button-secondary" (click)="cargarParaEditar(p)">Editar</button>
+              <button type="button" class="button button-danger" (click)="eliminar(p.id)">Eliminar</button>
+            </div>
+          </div>
+        } @empty {
+          <p class="empty-message">No hay productos registrados</p>
+        }
+      </div>
+    }
+  </section>
+</main>
