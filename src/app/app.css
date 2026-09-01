@@ -1,0 +1,61 @@
+.site-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 32px;
+  min-height: 76px;
+  padding: 14px clamp(24px, 6vw, 88px);
+  color: #f8fafc;
+  background: #000b29;
+  box-shadow: 0 3px 14px rgba(16, 24, 40, 0.16);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: inherit;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.brand__mark {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 10px;
+  color: #ecf6c7;
+  background: #426e86;
+}
+
+.brand__name span { color: #ecf6c7; }
+.main-nav,
+.account-nav { display: flex; align-items: center; gap: 20px; }
+.main-nav { justify-content: center; }
+.account-nav { justify-content: flex-end; }
+.main-nav a,
+.account-nav a { color: inherit; font-size: 0.9rem; font-weight: 600; text-decoration: none; }
+.main-nav a:hover,
+.main-nav a.activo,
+.account-nav a:hover,
+.account-nav a.activo { color: #ecf6c7; }
+
+@media (max-width: 900px) {
+  .site-header { grid-template-columns: 1fr auto; gap: 14px; padding: 14px 20px; }
+  .main-nav { grid-column: 1 / -1; grid-row: 2; justify-content: center; }
+  .account-nav { gap: 12px; }
+}
+
+@media (max-width: 600px) {
+  .site-header { grid-template-columns: 1fr; }
+  .brand { justify-self: center; }
+  .main-nav,
+  .account-nav { grid-column: 1; justify-content: center; flex-wrap: wrap; }
+  .main-nav { grid-row: 2; }
+  .account-nav { grid-row: 3; }
+  .account-nav .admin { display: none; }
+}

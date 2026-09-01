@@ -1,0 +1,36 @@
+<footer class="site-footer">
+  <div class="footer-heading">
+    <a class="footer-logo" routerLink="/">Nitro<span>Shop</span></a>
+    <p>Tecnología para trabajar, jugar y crear sin límites.</p>
+  </div>
+
+  <div class="footer-columns">
+    @for (columna of columnas; track columna.titulo) {
+      <section>
+        <h2>{{ columna.titulo }}</h2>
+        <ul>
+          @for (enlace of columna.enlaces; track enlace.texto) {
+            <li>
+              @if (enlace.ruta) {
+                <a [routerLink]="enlace.ruta">{{ enlace.texto }}</a>
+              } @else {
+                <span>{{ enlace.texto }}</span>
+              }
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  </div>
+
+  <hr />
+
+  <div class="footer-legal">
+    <span>© {{ year }} NitroShop. Todos los derechos reservados.</span>
+    <div>
+      <span>Términos de uso</span>
+      <span>Privacidad</span>
+      <span>Libro de reclamaciones</span>
+    </div>
+  </div>
+</footer>

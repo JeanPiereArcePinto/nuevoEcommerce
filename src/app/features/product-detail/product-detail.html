@@ -1,0 +1,96 @@
+<main class="min-h-[70vh] bg-white">
+  @if (producto(); as productoActual) {
+    <div class="grid grid-cols-1 gap-10 px-6 py-10 md:grid-cols-2 md:px-16 md:py-16">
+      <section>
+        <div class="relative flex aspect-square items-center justify-center bg-slate-100 p-10">
+          <a
+            routerLink="/catalogo"
+            class="absolute left-5 top-5 grid h-11 w-11 place-items-center rounded-full bg-white text-2xl text-slate-800 shadow-md transition hover:scale-105"
+            aria-label="Volver al catálogo"
+          >
+            ←
+          </a>
+          <img
+            [src]="productoActual.image"
+            [alt]="productoActual.name"
+            class="h-[75%] w-[75%] object-contain"
+          />
+        </div>
+      </section>
+
+      <section class="flex flex-col">
+        <p class="text-sm font-semibold uppercase tracking-widest text-[#426e86]">Tecnología</p>
+        <h1 class="mt-2 text-4xl font-semibold leading-tight text-[#000b29]">
+          {{ productoActual.name }}
+        </h1>
+        <p class="mt-5 text-3xl font-semibold text-slate-900">
+          {{ productoActual.price | precioSoles }}
+        </p>
+        <div class="mt-8">
+          <p class="mb-3 font-semibold text-slate-800">Cantidad</p>
+          <div class="flex items-center gap-5">
+            <div class="flex items-center rounded-full border border-slate-300">
+              <button type="button" class="h-11 w-11 text-xl" aria-label="Disminuir cantidad" (click)="disminuir()">−</button>
+              <span class="w-10 text-center font-semibold">{{ cantidad() }}</span>
+              <button
+                type="button"
+                class="h-11 w-11 text-xl disabled:cursor-not-allowed disabled:text-slate-300"
+                aria-label="Aumentar cantidad"
+                [disabled]="cantidad() >= productoActual.stock"
+                (click)="aumentar()"
+              >+</button>
+            </div>
+
+            <button
+              type="button"
+              class="h-12 flex-1 rounded-full bg-[#000b29] px-7 font-bold text-white transition hover:bg-[#426e86] disabled:cursor-not-allowed disabled:bg-slate-300"
+              [disabled]="productoActual.stock === 0"
+              (click)="agregarAlCarrito()"
+            >
+              {{ agregado() ? 'Agregado ✓' : productoActual.stock === 0 ? 'Sin stock' : 'Agregar al carrito' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-10 border-t border-slate-200">
+          <div class="border-b border-slate-200 py-5">
+            <button type="button" class="flex w-full items-center justify-between text-left font-semibold text-slate-900" (click)="alternarPanel('detalles')">
+              Detalles del producto <span>{{ panelAbierto() === 'detalles' ? '−' : '+' }}</span>
+            </button>
+            @if (panelAbierto() === 'detalles') {
+              <p class="mt-4 leading-7 text-slate-600">Producto original con garantía y respaldo de NitroShop.</p>
+            }
+          </div>
+
+          <div class="border-b border-slate-200 py-5">
+            <button type="button" class="flex w-full items-center justify-between text-left font-semibold text-slate-900" (click)="alternarPanel('envios')">
+              Envíos y devoluciones <span>{{ panelAbierto() === 'envios' ? '−' : '+' }}</span>
+            </button>
+            @if (panelAbierto() === 'envios') {
+              <p class="mt-4 leading-7 text-slate-600">Realizamos envíos a todo el Perú. Puedes solicitar una devolución dentro de los primeros 30 días.</p>
+            }
+          </div>
+
+          <div class="border-b border-slate-200 py-5">
+            <button type="button" class="flex w-full items-center justify-between text-left font-semibold text-slate-900" (click)="alternarPanel('disponibilidad')">
+              Disponibilidad <span>{{ panelAbierto() === 'disponibilidad' ? '−' : '+' }}</span>
+            </button>
+            @if (panelAbierto() === 'disponibilidad') {
+              <p class="mt-4 leading-7 text-slate-600">
+                {{ productoActual.stock > 0 ? productoActual.stock + ' unidades disponibles' : 'Producto sin stock' }}
+              </p>
+            }
+          </div>
+        </div>
+      </section>
+    </div>
+  } @else if (productService.error()) {
+    <div class="px-6 py-24 text-center">
+      <h1 class="text-3xl font-bold text-slate-900">No pudimos cargar el producto</h1>
+      <p class="mt-3 text-red-700">{{ productService.error() }}</p>
+      <a routerLink="/catalogo" class="mt-6 inline-block font-semibold text-[#426e86] hover:underline">Volver al catálogo</a>
+    </div>
+  } @else {
+    <div class="flex min-h-[60vh] items-center justify-center text-slate-500">Cargando producto…</div>
+  }
+</main>

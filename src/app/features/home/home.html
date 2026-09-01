@@ -1,0 +1,89 @@
+<main class="flex flex-col gap-16 bg-slate-100 pb-16 md:gap-24">
+  <section
+    class="relative flex min-h-125 items-end bg-slate-950 bg-cover bg-center px-6 pb-14 md:h-[70vh] md:px-16 md:pb-20"
+    style="background-image: linear-gradient(0deg, rgba(0, 11, 41, 0.8), rgba(0, 11, 41, 0.08)), url('https://i.blogs.es/2fa728/lorenzo-herrera-p0j-me6mgo4-unsplash-1-/1366_2000.jpeg')"
+  >
+    <div class="max-w-3xl text-white">
+      <p class="mb-3 text-sm font-bold uppercase tracking-[.3em] text-[#ecf6c7]">
+        Tecnología que te impulsa
+      </p>
+      <h1 class="text-5xl font-black uppercase leading-none md:text-7xl lg:text-8xl">
+        Potencia tu mundo
+      </h1>
+      <a
+        routerLink="/catalogo"
+        class="mt-8 inline-flex rounded-full bg-[#ecf6c7] px-7 py-3 font-bold text-[#000b29] transition hover:scale-105"
+      >
+        Comprar ahora
+      </a>
+    </div>
+  </section>
+
+  <section class="px-6 md:px-16">
+    <div class="flex items-end justify-between gap-4">
+      <h2 class="text-3xl font-bold text-slate-900">Tendencias</h2>
+      <a routerLink="/catalogo" class="font-semibold text-[#426e86] hover:underline">
+        Ver todo →
+      </a>
+    </div>
+
+    <div class="mt-7 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      @for (producto of productosTendencia(); track producto.id) {
+        <a
+          class="flex cursor-pointer flex-col items-center rounded-2xl bg-white p-5 text-center no-underline shadow-md transition hover:-translate-y-1 hover:shadow-xl"
+          [routerLink]="['/producto', producto.id]"
+          [attr.aria-label]="'Ver detalle de ' + producto.name"
+        >
+          <div class="mb-4 flex h-72 w-full items-center justify-center overflow-hidden rounded-2xl bg-slate-100 p-3">
+            <img
+              class="max-h-full max-w-full object-contain"
+              [src]="producto.image"
+              [alt]="producto.name"
+            />
+          </div>
+          <h3 class="text-lg font-semibold text-slate-800">{{ producto.name }}</h3>
+          <p class="mt-1 text-xl font-bold text-emerald-600">S/ {{ producto.price.toFixed(2) }}</p>
+        </a>
+      } @empty {
+        <p class="col-span-full rounded-2xl bg-white p-10 text-center text-slate-500">
+          Cargando productos destacados...
+        </p>
+      }
+    </div>
+  </section>
+
+  <section class="px-6 md:px-16">
+    <h2 class="text-3xl font-bold text-slate-900">Compra por colección</h2>
+    <div class="mt-7 flex gap-4 overflow-x-auto pb-3">
+      @for (coleccion of colecciones; track coleccion.nombre) {
+        <a
+          routerLink="/catalogo"
+          class="group relative flex aspect-4/5 w-56 flex-none items-end overflow-hidden rounded-2xl bg-cover bg-center md:w-72"
+          [style.background-image]="'url(' + coleccion.imagen + ')'"
+        >
+          <span class="absolute inset-0 bg-linear-to-t from-[#000b29]/80 to-transparent"></span>
+          <span
+            class="relative m-5 rounded-full bg-white px-5 py-2.5 font-bold text-[#000b29] transition group-hover:bg-[#ecf6c7]"
+          >
+            {{ coleccion.nombre }}
+          </span>
+        </a>
+      }
+    </div>
+  </section>
+
+  <section class="px-6 md:px-16">
+    <h2 class="text-3xl font-bold text-slate-900">Explora por categoría</h2>
+    <div class="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      @for (categoria of categorias; track categoria.nombre) {
+        <a
+          routerLink="/catalogo"
+          class="flex flex-col items-center gap-3 rounded-2xl bg-white px-4 py-7 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+        >
+          <span class="text-4xl" aria-hidden="true">{{ categoria.icono }}</span>
+          <span class="font-bold text-slate-700">{{ categoria.nombre }}</span>
+        </a>
+      }
+    </div>
+  </section>
+</main>

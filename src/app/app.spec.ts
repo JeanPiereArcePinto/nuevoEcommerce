@@ -1,10 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [provideRouter(routes)],
     }).compileComponents();
   });
 
@@ -14,10 +17,12 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render the active exercise (demo-carrito) with its 3 product cards', async () => {
+  it('should render the navigation and router outlet', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelectorAll('app-product-card').length).toBe(3);
+    expect(compiled.querySelector('nav')).toBeTruthy();
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
+    expect(compiled.querySelector('a[href="/catalogo"]')?.textContent).toContain('Catálogo');
   });
 });

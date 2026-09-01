@@ -1,22 +1,18 @@
-<!--
-  Selector de ejercicios para la clase.
-  Solo debe quedar UNA línea sin comentar a la vez: es la que se ve en pantalla.
-  Para cambiar de ejercicio, comenta la línea activa y descomenta la que quieras mostrar.
--->
-
-<app-header (vistaSeleccionada)="vistaActual.set($event)" />
-@switch (vistaActual()) {
-  @case ('catalogo') {
-    <app-demo-carrito />
-  }
-  @case ('registro') {
-    <app-registro />
-  }
-  @case ('login') {
-    <app-login />
-  }
-  @case ('admin') {
-    <app-product-admin />
-  }
-}
+<header class="site-header">
+  <a class="brand" routerLink="/" aria-label="Inicio de Nitro Shop">
+    <span class="brand__mark">N</span>
+    <span class="brand__name">Nitro<span>Shop</span></span>
+  </a>
+  <nav class="main-nav" aria-label="Navegación principal">
+    <a routerLink="/" routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+    <a routerLink="/catalogo" routerLinkActive="activo">Catálogo</a>
+    <a routerLink="/carrito" routerLinkActive="activo">Carrito</a>
+  </nav>
+  <nav class="account-nav" aria-label="Acciones de usuario">
+    <a class="admin" routerLink="/admin" routerLinkActive="activo">Administrar</a>
+    <a routerLink="/login" routerLinkActive="activo">Iniciar sesión</a>
+    <a routerLink="/registro" routerLinkActive="activo">Registrarse</a>
+  </nav>
+</header>
+<router-outlet />
 <app-footer />
