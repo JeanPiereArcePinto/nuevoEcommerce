@@ -5,6 +5,6 @@ export class CartComponent {
   private readonly router = inject(Router);
 
   finalizarCompra() {
-    this.router.navigate(['/']);
+    this.router.navigate(['/checkout']);
   }
 }

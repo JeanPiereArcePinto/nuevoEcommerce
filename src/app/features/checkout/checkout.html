@@ -1,3 +1,34 @@
 <main class="min-h-screen bg-slate-100 px-6 py-12">
-  <h1 class="text-center text-2xl font-bold text-slate-800">Checkout</h1>
+  <form class="mx-auto max-w-md rounded-xl bg-white p-6 shadow-md md:p-10" [formGroup]="checkoutForm" (ngSubmit)="confirmarPedido()">
+    <h1 class="mb-6 text-center text-2xl font-bold text-slate-800">Checkout</h1>
+    <label class="mb-4 block text-sm font-medium text-slate-700">
+      Nombre completo
+      <input type="text" formControlName="nombreCompleto" autocomplete="name" placeholder="Nombre completo" class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2" />
+      @if (checkoutForm.controls.nombreCompleto.invalid && checkoutForm.controls.nombreCompleto.touched) {
+        <span class="error mt-1 block text-sm text-red-600">El nombre completo es obligatorio</span>
+      }
+    </label>
+    <label class="mb-4 block text-sm font-medium text-slate-700">
+      Dirección
+      <input type="text" formControlName="direccion" autocomplete="street-address" placeholder="Dirección de entrega" class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2" />
+      @if (checkoutForm.controls.direccion.invalid && checkoutForm.controls.direccion.touched) {
+        <span class="error mt-1 block text-sm text-red-600">La dirección es obligatoria</span>
+      }
+    </label>
+    <label class="mb-4 block text-sm font-medium text-slate-700">
+      Número de tarjeta
+      <input type="text" inputmode="numeric" formControlName="numeroTarjeta" autocomplete="cc-number" placeholder="16 dígitos sin espacios" class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2" />
+      @if (checkoutForm.controls.numeroTarjeta.invalid && checkoutForm.controls.numeroTarjeta.touched) {
+        <span class="error mt-1 block text-sm text-red-600">Ingresa una tarjeta de exactamente 16 dígitos</span>
+      }
+    </label>
+    <label class="mb-4 block text-sm font-medium text-slate-700">
+      CVV
+      <input type="password" inputmode="numeric" formControlName="cvv" autocomplete="cc-csc" placeholder="3 dígitos" class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2" />
+      @if (checkoutForm.controls.cvv.invalid && checkoutForm.controls.cvv.touched) {
+        <span class="error mt-1 block text-sm text-red-600">Ingresa un CVV de exactamente 3 dígitos</span>
+      }
+    </label>
+    <button type="submit" [disabled]="checkoutForm.invalid" class="w-full rounded-md bg-emerald-600 px-4 py-2 font-medium text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50">Confirmar pedido</button>
+  </form>
 </main>

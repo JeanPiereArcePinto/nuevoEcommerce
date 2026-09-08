@@ -10,5 +10,6 @@ export const routes: Routes = [
   { path: 'admin', loadComponent: () => import('./features/product-admin/product-admin').then((m) => m.ProductAdminComponent) },
   { path: 'login', loadComponent: () => import('./features/auth/login/login').then((m) => m.LoginComponent) },
   { path: 'registro', loadComponent: () => import('./features/auth/registro/registro').then((m) => m.RegistroComponent) },
+  { path: 'checkout', loadComponent: () => import('./features/checkout/checkout').then((m) => m.CheckoutComponent), title: 'Checkout | NitroShop' },
   { path: '**', component: NotFoundComponent, title: 'Página no encontrada | NitroShop' },
 ];
