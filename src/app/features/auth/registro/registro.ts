@@ -1,8 +1,16 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Reto05PasswordStrength } from '../../../shared/ui/password-strength/password-strength';
-import { ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 
+
+export function passwordsIguales(): ValidatorFn {
+  return (group: AbstractControl): ValidationErrors | null => {
+    const password = group.get('password')?.value;
+    const confirmar = group.get('confirmarPassword')?.value;
+    return password === confirmar ? null : { passwordsNoCoinciden: true };
+  };
+}
 
 @Component({
   selector: 'app-registro',
@@ -11,43 +19,32 @@ import { ReactiveFormsModule } from '@angular/forms';
   templateUrl: './registro.html',
 })
 export class RegistroComponent {
-  nombre = signal('');
-  email = signal('');
-  password = signal('');
-  confirmarPassword = signal('');
-  aceptaTerminos = signal(false);
-  intentoRegistro = signal(false);
+  private fb = inject(FormBuilder);
+
+  registroForm = this.fb.nonNullable.group({
+    nombre: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    confirmarPassword: ['', Validators.required],
+    aceptaTerminos: [false, Validators.requiredTrue],
+  }, { validators: passwordsIguales() });
+
   mostrarConfirmarPassword = signal(false);
 
-  emailValido = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email().trim()));
-  passwordTieneEspacios = computed(() => /\s/.test(this.password()));
-  camposRequeridosCompletos = computed(() => Boolean(
-    this.nombre().trim() && this.email().trim() && this.password() && this.confirmarPassword() && this.aceptaTerminos() && !this.passwordTieneEspacios(),
-  ));
-  passwordsCoinciden = computed(() => this.confirmarPassword().length > 0 && this.password() === this.confirmarPassword());
-
-  actualizarCampo(campo: 'nombre' | 'email' | 'password' | 'confirmarPassword', evento: Event) {
-    this[campo].set((evento.target as HTMLInputElement).value);
+  actualizarPassword(password: string) {
+    this.registroForm.controls.password.setValue(password);
+    this.registroForm.controls.password.markAsDirty();
   }
 
   alternarVisibilidadConfirmacion() {
     this.mostrarConfirmarPassword.update((mostrar) => !mostrar);
   }
 
-  actualizarTerminos(evento: Event) {
-    this.aceptaTerminos.set((evento.target as HTMLInputElement).checked);
-  }
-
-  registrarse() {
-    this.intentoRegistro.set(true);
-    if (!this.camposRequeridosCompletos() || !this.emailValido() || !this.passwordsCoinciden()) return;
-
-    console.log({
-      nombre: this.nombre(),
-      email: this.email(),
-      password: this.password(),
-      confirmarPassword: this.confirmarPassword(),
-      aceptaTerminos: this.aceptaTerminos(),
-    });
+  onSubmit() {
+    if (this.registroForm.invalid) {
+      this.registroForm.markAllAsTouched();
+      return;
+    }
   }
 }
+

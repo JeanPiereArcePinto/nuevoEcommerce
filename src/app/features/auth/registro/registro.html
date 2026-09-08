@@ -1,35 +1,35 @@
 <main class="min-h-screen bg-slate-100 px-6 py-12">
   <div class="mx-auto grid max-w-4xl gap-8 rounded-xl bg-white p-6 shadow-md md:grid-cols-2 md:p-10">
-    <form novalidate (submit)="$event.preventDefault(); registrarse()">
+    <form novalidate [formGroup]="registroForm" (ngSubmit)="onSubmit()">
       <h1 class="mb-6 text-center text-2xl font-bold text-slate-800">Crear cuenta</h1>
       <label class="mb-4 block text-sm font-medium text-slate-700">Nombre
-        <input type="text" placeholder="Ejemplo: Jean Piere Arce" class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2" [value]="nombre()" (input)="actualizarCampo('nombre', $event)" required />
-        @if (intentoRegistro() && !nombre().trim()) { <span class="mt-1 block text-sm text-red-600">El nombre es obligatorio.</span> }
+        <input type="text" placeholder="Ejemplo: Jean Piere Arce" class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2" formControlName="nombre" required />
+        @if (registroForm.controls.nombre.invalid && registroForm.controls.nombre.touched) { <span class="mt-1 block text-sm text-red-600">El nombre es obligatorio</span> }
       </label>
       <label class="mb-4 block text-sm font-medium text-slate-700">Email
-        <input type="email" placeholder="Ejemplo: jeanpierearce@gmail.com" class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2" [value]="email()" (input)="actualizarCampo('email', $event)" required />
-        @if (intentoRegistro() && !email().trim()) { <span class="mt-1 block text-sm text-red-600">El email es obligatorio.</span> }
-        @if (intentoRegistro() && email().trim() && !emailValido()) { <span class="mt-1 block text-sm text-red-600">Ingresa un email con formato válido.</span> }
+        <input type="email" placeholder="Ejemplo: jeanpierearce@gmail.com" class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2" formControlName="email" required />
+        @if (registroForm.controls.email.hasError('required') && registroForm.controls.email.touched) { <span class="mt-1 block text-sm text-red-600">El email es obligatorio</span> }
+        @if (registroForm.controls.email.hasError('email') && registroForm.controls.email.touched) { <span class="mt-1 block text-sm text-red-600">Ingresa un email con formato válido</span> }
       </label>
       <label class="mb-4 block text-sm font-medium text-slate-700">Password
-        <app-reto-05-password-strength [(password)]="password" />
-        @if (intentoRegistro() && !password()) { <span class="mt-1 block text-sm text-red-600">La contraseña es obligatoria.</span> }
-        @if (passwordTieneEspacios()) { <span class="mt-1 block text-sm text-red-600">La contraseña no puede contener espacios.</span> }
+        <app-reto-05-password-strength [password]="registroForm.controls.password.value" (passwordChange)="actualizarPassword($event)" (focusout)="registroForm.controls.password.markAsTouched()" />
+        @if (registroForm.controls.password.hasError('required') && registroForm.controls.password.touched) { <span class="mt-1 block text-sm text-red-600">La contraseña es obligatoria</span> }
+        @if (registroForm.controls.password.hasError('minlength') && registroForm.controls.password.touched) { <span class="mt-1 block text-sm text-red-600">Mínimo 6 caracteres</span> }
       </label>
       <label class="mb-6 block text-sm font-medium text-slate-700">Confirmar password
         <div class="relative mt-1">
-          <input [type]="mostrarConfirmarPassword() ? 'text' : 'password'" class="w-full rounded-md border border-slate-300 px-3 py-2 pr-20" [value]="confirmarPassword()" (input)="actualizarCampo('confirmarPassword', $event)" required />
+          <input [type]="mostrarConfirmarPassword() ? 'text' : 'password'" class="w-full rounded-md border border-slate-300 px-3 py-2 pr-20" formControlName="confirmarPassword" required />
           <button type="button" class="absolute inset-y-0 right-0 px-3 text-sm font-medium text-slate-600" (click)="alternarVisibilidadConfirmacion()">{{ mostrarConfirmarPassword() ? 'Ocultar' : 'Mostrar' }}</button>
         </div>
-        @if (intentoRegistro() && !confirmarPassword()) { <span class="mt-1 block text-sm text-red-600">Debes confirmar la contraseña.</span> }
-        @if (confirmarPassword()) { <span class="mt-1 block text-sm" [class.text-emerald-600]="passwordsCoinciden()" [class.text-red-600]="!passwordsCoinciden()">{{ passwordsCoinciden() ? 'Las contraseñas coinciden' : 'Las contraseñas no coinciden' }}</span> }
+        @if (registroForm.controls.confirmarPassword.hasError('required') && registroForm.controls.confirmarPassword.touched) { <span class="mt-1 block text-sm text-red-600">Debes confirmar la contraseña</span> }
+        @if (registroForm.hasError('passwordsNoCoinciden') && registroForm.controls.confirmarPassword.touched) { <span class="error mt-1 block text-sm text-red-600">Las contraseñas no coinciden</span> }
       </label>
       <label class="mb-6 flex items-center gap-2 text-sm text-slate-700">
-        <input type="checkbox" class="h-4 w-4 rounded border-slate-300 accent-blue-600" [checked]="aceptaTerminos()" (change)="actualizarTerminos($event)" />
+        <input type="checkbox" class="h-4 w-4 rounded border-slate-300 accent-blue-600" formControlName="aceptaTerminos" />
         <span>Acepto los <a href="#" class="font-medium text-blue-600 hover:underline">Términos y Condiciones</a></span>
       </label>
-      @if (intentoRegistro() && !aceptaTerminos()) { <span class="-mt-4 mb-4 block text-sm text-red-600">Debes aceptar los Términos y Condiciones.</span> }
-      <button type="submit" class="w-full rounded-md bg-emerald-600 px-4 py-2 font-medium text-white hover:bg-emerald-700">Registrarse</button>
+      @if (registroForm.controls.aceptaTerminos.invalid && registroForm.controls.aceptaTerminos.touched) { <span class="-mt-4 mb-4 block text-sm text-red-600">Debes aceptar los Términos y Condiciones</span> }
+      <button type="submit" [disabled]="registroForm.invalid" class="w-full rounded-md bg-emerald-600 px-4 py-2 font-medium text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50">Registrarse</button>
       <p class="mt-4 text-center text-sm text-slate-600">¿Ya tienes una cuenta? <a href="#" class="font-medium text-blue-600 hover:underline">Inicia sesión aquí</a></p>
     </form>
     <aside class="border-t border-slate-200 pt-8 md:border-t-0 md:border-l md:pl-10 md:pt-0" aria-label="Registro con redes sociales">
@@ -42,3 +42,4 @@
     </aside>
   </div>
 </main>
+
