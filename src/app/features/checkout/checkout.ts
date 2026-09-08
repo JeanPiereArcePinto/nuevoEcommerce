@@ -17,6 +17,11 @@ export class CheckoutComponent {
     cvv: ['', [Validators.required, Validators.pattern(/^\d{3}$/)]],
   });
 
+  get nombreCompleto() { return this.checkoutForm.get('nombreCompleto'); }
+  get direccion() { return this.checkoutForm.get('direccion'); }
+  get numeroTarjeta() { return this.checkoutForm.get('numeroTarjeta'); }
+  get cvv() { return this.checkoutForm.get('cvv'); }
+
   confirmarPedido() {
     if (this.checkoutForm.invalid) {
       this.checkoutForm.markAllAsTouched();
