@@ -1,12 +1,13 @@
 import { Component, computed, signal } from '@angular/core';
 import { Reto05PasswordStrength } from '../../../shared/ui/password-strength/password-strength';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [Reto05PasswordStrength],
+  imports: [Reto05PasswordStrength, ReactiveFormsModule],
   templateUrl: './registro.html',
 })
 export class RegistroComponent {
