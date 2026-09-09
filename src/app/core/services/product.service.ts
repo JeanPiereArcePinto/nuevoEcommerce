@@ -13,10 +13,6 @@ export class ProductService {
   private readonly http = inject(HttpClient);
 
   private readonly API_URL = `${environment.supabaseUrl}/product`;
-  private readonly headersEscritura = {
-    'Content-Type': 'application/json',
-    Prefer: 'return=representation',
-  };
 
   readonly error = signal<string | null>(null);
   readonly productos = signal<Product[]>([]);
@@ -54,20 +50,14 @@ export class ProductService {
   }
 
   crear(producto: Partial<Product>) {
-    return this.http.post<Product[]>(this.API_URL, producto, {
-      headers: this.headersEscritura,
-    });
+    return this.http.post<Product[]>(this.API_URL, producto);
   }
 
   actualizar(id: string, cambios: Partial<Product>) {
-    return this.http.patch<Product[]>(`${this.API_URL}?id=eq.${id}`, cambios, {
-      headers: this.headersEscritura,
-    });
+    return this.http.patch<Product[]>(`${this.API_URL}?id=eq.${id}`, cambios);
   }
 
   eliminar(id: string) {
-    return this.http.delete(`${this.API_URL}?id=eq.${id}`, {
-      headers: this.headersEscritura,
-    });
+    return this.http.delete(`${this.API_URL}?id=eq.${id}`);
   }
 }
