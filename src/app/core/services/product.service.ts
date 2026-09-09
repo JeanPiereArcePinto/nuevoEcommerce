@@ -13,15 +13,7 @@ export class ProductService {
   private readonly http = inject(HttpClient);
 
   private readonly API_URL = `${environment.supabaseUrl}/product`;
-  private readonly API_KEY = environment.supabaseKey;
-
-  private readonly headers = {
-    apikey: this.API_KEY,
-    Authorization: `Bearer ${this.API_KEY}`,
-  };
-
   private readonly headersEscritura = {
-    ...this.headers,
     'Content-Type': 'application/json',
     Prefer: 'return=representation',
   };
@@ -53,7 +45,7 @@ export class ProductService {
   }
 
   listar() {
-    return this.http.get<Product[]>(this.API_URL, { headers: this.headers }).pipe(
+    return this.http.get<Product[]>(this.API_URL).pipe(
       catchError((err) => {
         console.error('Falló la petición:', err);
         return throwError(() => new Error('No se pudo cargar el catálogo'));
