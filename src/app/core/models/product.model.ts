@@ -5,3 +5,8 @@ export interface Product {
   image: string;
   stock: number;
 }
+
+export interface ProductSearchResult {
+  productos: Product[];
+  total: number;
+}

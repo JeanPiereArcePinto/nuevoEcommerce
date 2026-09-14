@@ -1,17 +1,26 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
+import { catchError, combineLatest, debounceTime, distinctUntilChanged, of, retry, switchMap, tap, timer } from 'rxjs';
 import { ProductCardComponent } from '../../../shared/ui/product-card/product-card';
 import { IProductoCarrito, IProductoTienda } from '../../../core/models/producto-carrito.interface';
+import { ProductSearchResult } from '../../../core/models/product.model';
 import { PrecioSolesPipe } from '../../../shared/pipes/precio-soles-pipe';
 import { ProductService } from '../../../core/services/product.service';
+import { SkeletonCardComponent } from '../../../shared/ui/skeleton-card/skeleton-card';
+import { ProductFilterComponent } from '../../../shared/ui/product-filter/product-filter';
+import { ProductPaginationComponent } from '../../../shared/ui/product-pagination/product-pagination';
 
 @Component({
   selector: 'app-demo-carrito',
   standalone: true,
-  imports: [ProductCardComponent, PrecioSolesPipe],
+  imports: [ProductCardComponent, SkeletonCardComponent, ProductFilterComponent, ProductPaginationComponent, PrecioSolesPipe],
   templateUrl: './demo-carrito.html',
 })
 export class DemoCarritoComponent {
   readonly productService = inject(ProductService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   // TODO: crea carrito = signal<ItemCarrito[]>([]) (ver
   // ../../models/carrito.model.ts), los métodos totalItems()/totalSoles()
   // que lo recorran, y onAddToCart(item) que agregue el producto (sumando
@@ -19,9 +28,82 @@ export class DemoCarritoComponent {
   // (addToCart)="onAddToCart($event)" en cada <app-product-card />.
 
   elementosCarrito: IProductoCarrito[] = []
-  textoBusqueda = signal('');
+  readonly textoBusqueda = signal('');
+  readonly categoria = signal('');
+  readonly paginaActual = signal(1);
+  readonly cargando = signal(false);
+  readonly skeletons = Array.from({ length: 10 }, (_, indice) => indice + 1);
+  readonly categorias = this.productService.categorias;
   favoritos = signal<IProductoTienda[]>([]);
   contadorFavoritos = computed(() => this.favoritos().length);
+
+  private readonly textoBusqueda$ = toObservable(this.textoBusqueda);
+  private readonly categoria$ = toObservable(this.categoria);
+  private readonly pagina$ = toObservable(this.paginaActual);
+  private textoAnterior: string | null = null;
+  private categoriaAnterior: string | null = null;
+
+  private readonly resultados$ = combineLatest([this.textoBusqueda$, this.categoria$, this.pagina$]).pipe(
+    debounceTime(300),
+    distinctUntilChanged(
+      ([textoA, categoriaA, paginaA], [textoB, categoriaB, paginaB]) =>
+        textoA === textoB && categoriaA === categoriaB && paginaA === paginaB,
+    ),
+    tap(() => this.cargando.set(true)),
+    switchMap(([texto, categoria, pagina]) =>
+      this.productService.buscar(texto, categoria, pagina).pipe(
+        retry({ count: 2, delay: () => timer(500) }),
+        tap(() => this.cargando.set(false)),
+        catchError(() => {
+          this.cargando.set(false);
+          return of({ productos: [], total: 0 } as ProductSearchResult);
+        }),
+      ),
+    ),
+  );
+
+  private readonly respuestaBusqueda = toSignal(this.resultados$, {
+    initialValue: { productos: [], total: 0 } as ProductSearchResult,
+  });
+  readonly resultados = computed(() => this.respuestaBusqueda().productos);
+  readonly totalPaginas = computed(() => Math.ceil(this.respuestaBusqueda().total / 10));
+
+  constructor() {
+    const params = this.route.snapshot.queryParamMap;
+    const paginaDesdeUrl = Number(params.get('page') ?? 1);
+
+    this.textoBusqueda.set(params.get('q') ?? '');
+    this.categoria.set(params.get('categoria') ?? '');
+    this.paginaActual.set(Number.isFinite(paginaDesdeUrl) ? Math.max(1, paginaDesdeUrl) : 1);
+
+    effect(() => {
+      const texto = this.textoBusqueda();
+      if (this.textoAnterior !== null && texto !== this.textoAnterior) {
+        this.paginaActual.set(1);
+      }
+      this.textoAnterior = texto;
+    });
+
+    effect(() => {
+      const categoria = this.categoria();
+      if (this.categoriaAnterior !== null && categoria !== this.categoriaAnterior) {
+        this.paginaActual.set(1);
+      }
+      this.categoriaAnterior = categoria;
+    });
+
+    effect(() => {
+      this.router.navigate([], {
+        queryParams: {
+          q: this.textoBusqueda(),
+          categoria: this.categoria(),
+          page: this.paginaActual(),
+        },
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      });
+    });
+  }
 
   productosLocales = [
     { id: 1, nombre: 'Smartwatch Watch 7 Small Green"', precio: 599, imagen: 'https://media.falabella.com/tottusPE/43377809_1/w=800,h=800,fit=pad', stock: 7 },
@@ -56,22 +138,24 @@ export class DemoCarritoComponent {
     { id: 30, nombre: 'Micrófono DJI Mic 3', precio: 1300, imagen: 'https://media.falabella.com/falabellaPE/146713301_01/w=1200,h=1200,fit=pad', stock: 7 },    
   ];
 
-  productosFiltrados = computed(() => {
-    const texto = this.textoBusqueda().trim().toLocaleLowerCase();
-    const productos = this.productService.productos();
+  actualizarBusqueda(texto: string) {
+    this.textoBusqueda.set(texto);
+  }
 
-    if (!texto) {
-      return productos;
-    }
+  siguientePagina() {
+    this.paginaActual.update((pagina) => pagina + 1);
+  }
 
-    return productos.filter((producto) =>
-      producto.name.toLocaleLowerCase().includes(texto)
-    );
-  });
+  paginaAnterior() {
+    this.paginaActual.update((pagina) => Math.max(1, pagina - 1));
+  }
 
-  actualizarBusqueda(evento: Event) {
-    const input = evento.target as HTMLInputElement;
-    this.textoBusqueda.set(input.value);
+  cambiarCategoria(categoria: string) {
+    this.categoria.set(categoria);
+  }
+
+  cambiarPagina(pagina: number) {
+    this.paginaActual.set(pagina);
   }
 
   manejarToggleFavorito(producto: IProductoTienda) {
@@ -90,8 +174,7 @@ export class DemoCarritoComponent {
 
   manejarAgregarAlCarrito(data: IProductoCarrito){
     const productoExistente = this.elementosCarrito.find((item) => item.id === data.id);
-    const productoTienda = this.productService
-      .productos()
+    const productoTienda = this.resultados()
       .find((producto) => producto.id === data.id);
 
     if (!productoTienda || productoTienda.stock === 0) {

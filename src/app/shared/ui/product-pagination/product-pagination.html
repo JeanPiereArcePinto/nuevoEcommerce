@@ -1,0 +1,9 @@
+@if (totalPaginas() > 1) {
+  <nav class="mt-8 flex flex-wrap items-center justify-center gap-2" aria-label="PaginaciÃ³n del catÃ¡logo">
+    <button type="button" class="rounded-xl border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 disabled:cursor-not-allowed disabled:opacity-50" [disabled]="pagina() === 1" (click)="cambiarPagina(pagina() - 1)">Anterior</button>
+    @for (item of paginas(); track item) {
+      <button type="button" class="h-10 w-10 rounded-xl border font-semibold transition" [class]="pagina() === item ? 'border-emerald-600 bg-emerald-500 text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'" (click)="cambiarPagina(item)">{{ item }}</button>
+    }
+    <button type="button" class="rounded-xl bg-emerald-500 px-4 py-2 font-medium text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-50" [disabled]="pagina() === totalPaginas()" (click)="cambiarPagina(pagina() + 1)">Siguiente</button>
+  </nav>
+}
